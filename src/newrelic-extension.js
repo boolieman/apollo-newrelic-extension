@@ -15,7 +15,6 @@ class NewRelicExtension extends GraphQLExtension {
     newrelic.setTransactionName(`graphql (${operationName})`)
     newrelic.addCustomAttribute('gqlQuery', queryString)
     newrelic.addCustomAttribute('gqlVars', JSON.stringify(variables))
-    newrelic.addCustomAttribute('persistedQueryHit', persistedQueryHit)
   }
 
   willSendResponse ({ graphqlResponse }) {
@@ -23,6 +22,7 @@ class NewRelicExtension extends GraphQLExtension {
       R.pathOr([], ['extensions', 'tracing']),
       fieldTraceSummary
     )(graphqlResponse)
+    newrelic.addCustomAttribute('durationOfOperation', `${graphqlResponse.extensions.tracing.duration / 100000000} seconds`)
     newrelic.addCustomAttribute('traceSummary', tracingSummary)
     newrelic.addCustomAttribute('errorCount', errorCount(graphqlResponse))
   }
