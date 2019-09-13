@@ -22,7 +22,9 @@ class NewRelicExtension extends GraphQLExtension {
       R.pathOr([], ['extensions', 'tracing']),
       fieldTraceSummary
     )(graphqlResponse)
-    newrelic.addCustomAttribute('millisecondDuration', graphqlResponse.extensions.tracing.duration / 1000000)
+    if(graphqlResponse.extensions && graphqlResponse.extensions.tracing && graphqlResponse.extensions.tracing.duration) {
+      newrelic.addCustomAttribute('millisecondDuration', graphqlResponse.extensions.tracing.duration / 1000000)
+    }
     newrelic.addCustomAttribute('traceSummary', tracingSummary)
     newrelic.addCustomAttribute('errorCount', errorCount(graphqlResponse))
   }
